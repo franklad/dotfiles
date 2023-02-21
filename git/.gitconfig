@@ -1,0 +1,143 @@
+[alias]
+    al  = !git config --get-regexp alias | sed -re 's/alias\\.(\\S*)\\s(.*)$/\\1 = \\2/g'
+    a   = commit --amend
+    br  = branch
+    c   = commit
+    cl  = clone
+    ca  = !git add -A && git commit
+    co  = checkout
+    cod = checkout develop
+    com = checkout main
+    cp  = cherry-pick
+    d   = diff -- . ':!*package-lock.json' ':!*yarn.lock'
+    dc  = diff --cached -- . ':!*package-lock.json' ':!*yarn.lock'
+    f   = fetch
+    lg  = log --graph --date=relative --pretty=tformat:\"%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ad)%Creset\"
+    lc  = shortlog --email --numbered --summary
+    p   = push
+    pl  = pull
+    s  = status
+    pf  = push --force
+    rb  = rebase
+    rbm = rebase develop
+    rbm = rebase main
+    rbc = rebase --continue
+    rbs = rebase --skip
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    # List remote branches.
+
+    lrb = "!f() { \
+        remote="${1:-origin}"; \
+        git ls-remote --heads "$remote"; \
+    }; f"
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    # Remove the tag with the specified tag name if
+    # exists and tag the latest commit with that name.
+
+    retag = "!f() { \
+        git tag -d "$1" &> /dev/null; \
+        git tag $1; \
+    }; f"
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    # Remove last commits (by default it removes the last commit).
+
+    rlc = "!f() { \
+        declare n=\"${1:-1}\"; \
+        git reset --hard \"HEAD~$n\"; \
+    }; f"
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    # Undo last commits (by default it undoes the last commit).
+
+    ulc = "!f() { \
+        declare n=\"${1:-1}\"; \
+        git reset --soft \"HEAD~$n\"; \
+    }; f"
+
+
+[color "branch"]
+    current = green bold
+    local = green
+    remote = yellow
+
+[color "diff"]
+    frag = magenta
+    meta = yellow
+
+    new = green
+    old = red
+
+    newMoved = cyan
+    oldMoved = blue
+
+[color "status"]
+    added = green reverse
+    changed = yellow reverse
+    untracked = red reverse
+
+[core]
+    abbrev = 12
+    attributesfile = ~/.gitattributes
+    autocrlf = input
+    editor = code --wait
+    excludesfile = ~/.gitignore
+
+[diff]
+    # Show blocks of moved text of at least 20
+    # alphanumeric characters differently than adds/deletes.
+    #
+    # https://git-scm.com/docs/git-diff#git-diff-zebra
+
+    colorMoved = zebra
+
+[diff "bin"]
+    # Use `hexdump` to diff binary files.
+
+    textconv = hexdump -v -C
+
+[push]
+    # Make `git push` automatically push relevant
+    # annotated tags when pushing branches out.
+    default = current
+    followTags = true
+
+[user]
+    # Do not guess the user's identity.
+    # https://github.com/git/git/blob/90f7b16b3adc78d4bbabbd426fb69aa78c714f71/Documentation/config.txt#L2847-L2855
+
+    useConfigOnly = true
+
+    # [!] DO NOT store sensitive information such as the Git user
+    # credentials (`name` / `email`), or things such as the `signingkey`
+    # in this file, add them in `~/.gitconfig.local`!
+    #
+    # See also: https://github.com/alrra/dotfiles#gitconfiglocal
+
+[tag]
+    # Sort tags as version numbers whenever applicable, so 1.10.2 is AFTER 1.2.0.
+    sort = version:refname
+
+[versionsort]
+    prereleaseSuffix = -pre
+    prereleaseSuffix = .pre
+    prereleaseSuffix = -beta
+    prereleaseSuffix = .beta
+    prereleaseSuffix = -rc
+    prereleaseSuffix = .rc
+
+[include]
+    # Load local configs.
+    # https://git-scm.com/docs/git-config#_includes
+    #
+    # [!] The following needs to remain at the end of this file in
+    #     order to allow any of the above configs to be overwritten
+    #     by the local ones
+
+    path = ~/.gitconfig.local
